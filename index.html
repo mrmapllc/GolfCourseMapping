@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Drawing Tool</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Automated GIS for Golf Course Mapping</h1>
+    </header>
+    <div id="map"></div>
+    <div id="basemapSwitcher" class="control-top-left">
+        <label for="tileSource">Basemap:</label>
+        <select id="tileSource">
+            <option value="osm">OpenStreetMap</option>
+            <option value="mapboxSatellite">Mapbox Satellite</option>
+            <option value="esri">Esri World Imagery</option>
+            <option value="cartoDBVoyager">CartoDB Voyager</option>
+            <option value="googleImagery">Google Imagery</option>
+            <option value="googleMaps">Google Maps</option>
+            <option value="custom">Custom Imagery</option>
+        </select>
+    </div>
+    <div id="searchBar" class="control-top-right">
+        <label for="search">Search:</label>
+        <input type="text" id="search" name="search">
+        <button id="searchButton">Search</button>
+        <div id="supportText">
+            <p>Having issues? Contact your developer at <a href="mailto:mrmap@mrmapgroup.com">mrmap@mrmapgroup.com</a>.</p>
+            <p>Custom GIS Application Created By Mr. Map, LLC for Austin Powell.</p>
+        </div>
+    </div>
+    <div id="handDrawControls" class="control-top-right">
+        <label for="dashedLineColor">Dashed Line Color:</label>
+        <select id="dashedLineColor">
+            <option value="0,176,240">Blue</option>
+            <option value="237,125,49">Orange</option>
+            <option value="255,192,0">Yellow</option>
+        </select>
+        <button id="startDrawDashedLine">Draw Dashed Line</button>
+    </div>
+    <div id="controls" class="control-bottom-center">
+        <label for="distance">Distance (yards):</label>
+        <input type="number" id="distance" name="distance">
+        <label for="bearing">Bearing (degrees):</label>
+        <input type="number" id="bearing" name="bearing">
+        <label for="feature">Feature:</label>
+        <select id="feature">
+            <option value="line">Line</option>
+            <option value="buffer">Buffer</option>
+            <option value="lineAndBuffer" selected>Line and Buffer</option>
+        </select>
+        <label for="color">Color:</label>
+        <select id="color">
+            <option value="0,176,240">Blue</option>
+            <option value="237,125,49">Orange</option>
+            <option value="255,192,0">Yellow</option>
+        </select>
+        <button id="drawFeature">Draw</button>
+    </div>
+    <button id="deleteFeaturesButton" class="control-top-left delete-features-button">
+        <i class="fas fa-eraser"></i>
+    </button>
+    <div id="compassContainer" class="control-bottom-left">
+        <object type="image/svg+xml" data="compassrose_custom.svg" id="compassImage" alt="Compass"></object>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
