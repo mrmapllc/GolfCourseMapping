@@ -264,7 +264,7 @@ document.addEventListener("DOMContentLoaded", function() {
             drawnDashedLine = L.polyline([latlng], {
                 color: 'rgb(' + color[0] + ',' + color[1] + ',' + color[2] + ')',
                 dashArray: '5, 10'
-            }).addTo(map);
+            }).addTo(drawnDashedLines);
         } else {
             drawnDashedLine.addLatLng(latlng);
         }
@@ -275,6 +275,7 @@ document.addEventListener("DOMContentLoaded", function() {
             drawingDashedLine = false;
             map.off('click', onMapClick);
             map.off('dblclick', finishDashedLine);
+            drawnDashedLine = null; // Reset the drawnDashedLine for the next drawing
         }
     }
 
