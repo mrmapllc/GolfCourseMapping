@@ -87,6 +87,9 @@ document.addEventListener("DOMContentLoaded", function() {
     let drawnItems = new L.FeatureGroup();
     map.addLayer(drawnItems);
 
+    let drawnDashedLines = new L.FeatureGroup();
+    map.addLayer(drawnDashedLines);
+
     map.on('click', function(e) {
         if (originPoint) {
             map.removeLayer(originPoint);
@@ -137,6 +140,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     document.getElementById('deleteFeaturesButton').addEventListener('click', function() {
         drawnItems.clearLayers();
+        drawnDashedLines.clearLayers();
     });
 
     function geocode(query) {
@@ -273,4 +277,103 @@ document.addEventListener("DOMContentLoaded", function() {
             map.off('dblclick', finishDashedLine);
         }
     }
+
+    // Function to download data as a file
+    function downloadData(data, filename, type) {
+        const file = new Blob([data], { type: type });
+        const a = document.createElement("a");
+        const url = URL.createObjectURL(file);
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }, 0);
+    }
+
+    // Function to convert GeoJSON to KML
+    function convertGeoJSONToKML(geojson) {
+        // Basic implementation for converting GeoJSON to KML
+        // You may need to use a more comprehensive library for a full conversion
+        const kmlHeader = '<?xml version="1.0" encoding="UTF-8"?><kml xmlns="http://www.opengis.net/kml/2.2"><Document>';
+        const kmlFooter = '</Document></kml>';
+        const kmlBody = geojson.features.map(feature => {
+            const coordinates = feature.geometry.coordinates[0].map(coord => coord.join(',')).join(' ');
+            return `<Placemark><name>${feature.properties.name || 'Feature'}</name><Polygon><outerBoundaryIs><LinearRing><coordinates>${coordinates}</coordinates></LinearRing></outerBoundaryIs></Polygon></Placemark>`;
+        }).join('');
+        return kmlHeader + kmlBody + kmlFooter;
+    }
+
+    // Add event listener to download features button
+    document.getElementById('downloadFeaturesButton').addEventListener('click', function() {
+        const modal = document.getElementById("downloadModal");
+        modal.style.display = "block";
+    });
+
+    // Close the modal when the user clicks on <span> (x)
+    document.querySelector(".close-button").addEventListener('click', function() {
+        const modal = document.getElementById("downloadModal");
+        modal.style.display = "none";
+    });
+
+    // Handle the download confirmation
+    document.getElementById('confirmDownload').addEventListener('click', function() {
+        const fileName = document.getElementById('fileName').value || 'features';
+        const format = document.getElementById('fileFormat').value;
+        
+        const includeLine = document.getElementById('downloadLine').checked;
+        const includeBuffer = document.getElementById('downloadBuffer').checked;
+        const includeDashedLine = document.getElementById('downloadDashedLine').checked;
+
+        // Collect the selected features
+        let geojson = { type: 'FeatureCollection', features: [] };
+
+        if (includeLine) {
+            drawnItems.eachLayer(function(layer) {
+                if (layer instanceof L.Polyline && !layer.options.dashArray) {
+                    geojson.features.push(layer.toGeoJSON());
+                }
+            });
+        }
+        if (includeBuffer) {
+            drawnItems.eachLayer(function(layer) {
+                if (layer instanceof L.Circle) {
+                    geojson.features.push(layer.toGeoJSON());
+                }
+            });
+        }
+        if (includeDashedLine) {
+            drawnDashedLines.eachLayer(function(layer) {
+                geojson.features.push(layer.toGeoJSON());
+            });
+        }
+
+        let dataStr, dataType;
+
+        if (format === 'geojson') {
+            dataStr = JSON.stringify(geojson);
+            dataType = 'application/json';
+        } else if (format === 'kml') {
+            dataStr = convertGeoJSONToKML(geojson);
+            dataType = 'application/vnd.google-earth.kml+xml';
+        } else {
+            alert('Unsupported file format');
+            return;
+        }
+
+        downloadData(dataStr, `${fileName}.${format}`, dataType);
+        document.getElementById("downloadModal").style.display = "none";
+    });
+
+    // Show/Hide Compass
+    document.getElementById('toggleCompassButton').addEventListener('click', function() {
+        const compassContainer = document.getElementById('compassContainer');
+        if (compassContainer.style.display === 'none' || compassContainer.style.display === '') {
+            compassContainer.style.display = 'block';
+        } else {
+            compassContainer.style.display = 'none';
+        }
+    });
 });

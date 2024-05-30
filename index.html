@@ -11,7 +11,7 @@
 </head>
 <body>
     <header>
-        <h1>Automated GIS for Golf Course Mapping</h1>
+        <h1>Austin Powell's Automated GIS</h1>
     </header>
     <div id="map"></div>
     <div id="basemapSwitcher" class="control-top-left">
@@ -36,7 +36,7 @@
         </div>
     </div>
     <div id="handDrawControls" class="control-top-right">
-        <label for="dashedLineColor">Dashed Line Color:</label>
+        <label for="dashedLineColor">Draw Dashed Line</label>
         <select id="dashedLineColor">
             <option value="0,176,240">Blue</option>
             <option value="237,125,49">Orange</option>
@@ -66,9 +66,45 @@
     <button id="deleteFeaturesButton" class="control-top-left delete-features-button">
         <i class="fas fa-eraser"></i>
     </button>
-    <div id="compassContainer" class="control-bottom-left">
+    <button id="downloadFeaturesButton" class="control-top-left download-features-button">
+        <i class="fa-solid fa-download"></i>
+    </button>
+    <button id="toggleCompassButton" class="control-top-left toggle-compass-button">
+        <i class="fas fa-compass"></i>
+    </button>
+    <div id="compassContainer" class="control-bottom-left" style="display: none;">
         <object type="image/svg+xml" data="compassrose_custom.svg" id="compassImage" alt="Compass"></object>
     </div>
+
+    <!-- Modal for download options -->
+    <div id="downloadModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Download Features</h2>
+            <label for="fileName">File Name:</label>
+            <input type="text" id="fileName" name="fileName" placeholder="features">
+            <label for="fileFormat">File Format:</label>
+            <select id="fileFormat" name="fileFormat">
+                <option value="geojson">GeoJSON</option>
+                <option value="kml">KML</option>
+            </select>
+            <label>Select Features to Download:</label>
+            <div>
+                <input type="checkbox" id="downloadLine" name="downloadFeature" value="line" checked>
+                <label for="downloadLine">Line</label>
+            </div>
+            <div>
+                <input type="checkbox" id="downloadBuffer" name="downloadFeature" value="buffer" checked>
+                <label for="downloadBuffer">Buffer</label>
+            </div>
+            <div>
+                <input type="checkbox" id="downloadDashedLine" name="downloadFeature" value="dashedLine" checked>
+                <label for="downloadDashedLine">Dashed Line</label>
+            </div>
+            <button id="confirmDownload">Download</button>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
